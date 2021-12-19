@@ -1,0 +1,4 @@
+aiogram==2.17.1
+aiomysql==0.0.21
+aioredis==2.0.0
+python-dotenv==0.19.2
