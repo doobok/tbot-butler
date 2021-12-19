@@ -25,7 +25,8 @@ mysql_info = {
     'port':     int(os.getenv('DB_PORT')),
 }
 redis = {
-    'address':  'redis://' + ip['redis'],
-    'password': os.getenv('REDIS_PASSWORD')
+    'address':  ip['redis'],
+    'password': os.getenv('REDIS_PASSWORD'),
+    'db': os.getenv('REDIS_DB'),
 }
 

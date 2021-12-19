@@ -2,6 +2,7 @@ import argparse
 import logging
 
 from aiogram import Bot, types
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.dispatcher.webhook import SendMessage
@@ -12,20 +13,18 @@ from data import config
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=config.BOT_TOKEN)
-dp = Dispatcher(bot)
+storage = RedisStorage2(
+    config.redis['address'], 6379,
+    password=config.redis['password'],
+    db=config.redis['db'],
+    pool_size=10, prefix='butler')
+dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(LoggingMiddleware())
 
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    # Regular request
-    # await bot.send_message(message.chat.id, message.text)
-
-    # or reply INTO webhook
-    return SendMessage(message.chat.id, message.text)
-
-
 async def on_startup(dp):
+    import handlers
+    handlers.setup(dp)
     await bot.set_webhook(config.WEBHOOK_URL)
     # insert code here to run it after start
 
@@ -53,4 +52,5 @@ if __name__ == '__main__':
         # skip_updates=True,
         host=config.WEBAPP_HOST,
         port=config.WEBAPP_PORT,
+
     )
