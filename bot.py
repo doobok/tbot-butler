@@ -12,7 +12,7 @@ from data import config
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=config.BOT_TOKEN)
+bot = Bot(token=config.BOT_TOKEN, parse_mode="MarkdownV2")
 storage = RedisStorage2(
     config.redis['address'], 6379,
     password=config.redis['password'],

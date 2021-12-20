@@ -59,6 +59,13 @@ class MysqlConnection(RawConnection):
                     await conn.commit()
 
     @staticmethod
+    def _convert_to_model(data: Optional[dict], model: Type[T]) -> Optional[T]:
+        if data is not None:
+            return model(**data)
+        else:
+            return None
+
+    @staticmethod
     async def _make_request(
             sql: str,
             params: Union[tuple, List[tuple]] = None,
@@ -72,14 +79,14 @@ class MysqlConnection(RawConnection):
                 return []
             else:
                 return None
-        # else:
-        #     if mult:
-        #         if model_type is not None:
-        #             # return [MysqlConnection._convert_to_model(i, model_type) for i in raw]
-        #         else:
-        #             return list(raw)
-        #     else:
-        #         if model_type is not None:
-        #             # return MysqlConnection._convert_to_model(raw, model_type)
-        #         else:
-        #             return raw
+        else:
+            if mult:
+                if model_type is not None:
+                    return [MysqlConnection._convert_to_model(i, model_type) for i in raw]
+                else:
+                    return list(raw)
+            else:
+                if model_type is not None:
+                    return MysqlConnection._convert_to_model(raw, model_type)
+                else:
+                    return raw
