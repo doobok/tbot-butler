@@ -4,16 +4,23 @@ from aiogram.dispatcher import FSMContext
 from data import config
 from states.mane import UserAdd
 from utils.db.users import User
-from utils.keyboards.global_kbd import main_menu, cancel_menu, confirm_add_user, go_to_main
+from utils.keyboards.global_kbd import main_menu, cancel_menu, confirm_add_user, go_to_main, ext_menu
 
 
 async def bot_start(msg: types.Message, state: FSMContext):
-    await msg.answer('Прехорошого дня! \nБажаєте внести видаток, або дохід?', reply_markup=main_menu())
+    user = await User.get_user(msg)
+    name = user['name']
+    await msg.answer(f'Прехорошого дня, {name} \nБажаєте внести видаток, або дохід?', reply_markup=main_menu())
 
 
 async def bot_restart(msg: types.Message, state: FSMContext):
     await state.reset_state(with_data=False)
     await msg.answer('Оберіть пункт меню', reply_markup=main_menu())
+
+
+async def external_menu(msg: types.Message, state: FSMContext):
+    await state.reset_state(with_data=False)
+    await msg.answer('Що бажаєте налаштувати?', reply_markup=ext_menu())
 
 
 async def add_user1(msg: types.Message, state: FSMContext):

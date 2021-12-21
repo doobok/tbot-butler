@@ -5,3 +5,7 @@ class UserAdd(StatesGroup):
     wait_for_contact = State()
     wait_for_name = State()
     wait_for_confirm = State()
+
+
+class CatEdit(StatesGroup):
+    in_menu = State()

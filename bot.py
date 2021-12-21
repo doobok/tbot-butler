@@ -23,7 +23,9 @@ dp.middleware.setup(LoggingMiddleware())
 
 
 async def on_startup(dp):
+    import middlewares
     import handlers
+    middlewares.setup(dp)
     handlers.setup(dp)
     await bot.set_webhook(config.WEBHOOK_URL)
     # insert code here to run it after start
