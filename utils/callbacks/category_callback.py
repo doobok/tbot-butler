@@ -25,9 +25,9 @@ def confirm(approve):
         return callback.new(approve=approve)
 
 
-def del_cat_item(cat_id):
-    callback = CallbackData('del-category', 'id')
-    if cat_id is None:
+def remove(uid):
+    callback = CallbackData('remove', 'id')
+    if uid is None:
         return callback.filter()
     else:
-        return callback.new(id=cat_id)
+        return callback.new(id=uid)

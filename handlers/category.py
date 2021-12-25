@@ -79,3 +79,12 @@ async def category_create(query: types.CallbackQuery, state: FSMContext):
     txt = 'Категорія успішно додана'
     await query.message.edit_text(txt)
     await query.message.edit_reply_markup(reply_markup=go_to_root())
+
+
+async def category_remove(query: types.CallbackQuery, state: FSMContext, callback_data: dict):
+    await query.answer()
+    uid = callback_data['id']
+    await Category.delete(cat_id=uid)
+    txt = 'Категорія успішно видалена'
+    await query.message.edit_text(txt)
+    await query.message.edit_reply_markup(reply_markup=go_to_root())

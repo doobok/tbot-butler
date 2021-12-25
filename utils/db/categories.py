@@ -21,3 +21,9 @@ class Category(MysqlConnection):
         sql = 'SELECT * FROM `categories` WHERE `id` = %s'
         params = (cat_id,)
         return await Category._make_request(sql, params, fetch=True)
+
+    @staticmethod
+    async def delete(cat_id: int):
+        sql = 'DELETE FROM `categories` WHERE `categories`.`id` = %s'
+        params = (cat_id,)
+        return await Category._make_request(sql, params)
