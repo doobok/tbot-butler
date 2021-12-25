@@ -9,3 +9,5 @@ class UserAdd(StatesGroup):
 
 class CatEdit(StatesGroup):
     in_menu = State()
+    wait_for_type = State()
+    wait_for_confirm = State()
