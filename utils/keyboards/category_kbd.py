@@ -38,3 +38,18 @@ def go_to_root():
     return k.row(
         types.InlineKeyboardButton(menu_str['go-to-root'], callback_data=cat_list_item(0)),
     )
+
+
+def categories_select(categories, item):
+    k = types.InlineKeyboardMarkup()
+    if len(categories) > 0:
+        for cat in categories:
+            k.insert(types.InlineKeyboardButton(cat['name'], callback_data=cat_list_item(cat['id'])))
+    if item:
+        k.insert(types.InlineKeyboardButton(menu_str['back'], callback_data=cat_list_item(item['parent_id'])))
+    return k
+
+
+def nex_step():
+    k = types.InlineKeyboardMarkup()
+    return k.row(types.InlineKeyboardButton(menu_str['confirm'], callback_data=confirm(True)))
