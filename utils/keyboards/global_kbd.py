@@ -1,5 +1,6 @@
 from aiogram import types
 
+from utils.callbacks.category_callback import navigate
 from utils.misc.menu_utils import menu_str
 
 
@@ -17,6 +18,9 @@ def main_menu():
 def ext_menu():
     k = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     return k.row(
+        types.KeyboardButton(text=menu_str['incomes']),
+        types.KeyboardButton(text=menu_str['costs']),
+    ).row(
         types.KeyboardButton(text=menu_str['cat-income']),
         types.KeyboardButton(text=menu_str['cat-cost']),
     ).row(
@@ -44,3 +48,12 @@ def confirm_add_user():
         types.KeyboardButton(text=menu_str['cancel']),
         types.KeyboardButton(text=menu_str['add-user-conf']),
     )
+
+
+def pagination_nav(start: int, count: int):
+    k = types.InlineKeyboardMarkup()
+    if start > 0:
+        k.insert(types.InlineKeyboardButton(menu_str['back'], callback_data=navigate(0)))
+    if count > 9:
+        k.insert(types.InlineKeyboardButton(menu_str['forward'], callback_data=navigate(1)))
+    return k

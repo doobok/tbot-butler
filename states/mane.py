@@ -16,3 +16,7 @@ class CatEdit(StatesGroup):
 class PayAdd(StatesGroup):
     wait_for_cat = State()
     wait_for_comment = State()
+
+
+class PaysList(StatesGroup):
+    in_list = State()

@@ -31,3 +31,11 @@ def remove(uid):
         return callback.filter()
     else:
         return callback.new(id=uid)
+
+
+def navigate(forward):
+    callback = CallbackData('navigate', 'forward')
+    if forward is None:
+        return callback.filter()
+    else:
+        return callback.new(forward=forward)
