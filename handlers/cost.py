@@ -140,9 +140,21 @@ async def format_list(items: list):
     if len(items) > 0:
         locale.setlocale(locale.LC_ALL, 'uk_UA.UTF-8')
         for item in items:
-            txt.append('👉 <b>%s</b> [ %s ] \n<i><u>%s</u>\n%s</i> ' %
+            txt.append('👉 <b>%s</b> [ %s ] \n<i><u>%s</u> /delpay_%s❌\n%s</i> ' %
                        (locale.currency(float(item.get('sum')), grouping=True), item.get('name'), item.get('time'),
-                        item.get('comment')))
+                        item.get('id'), item.get('comment')))
     else:
         txt.append('💁‍♂️ Нічого не знайдено')
     return '\n'.join(txt)
+
+
+async def delete_pay(msg: types.Message,  state: FSMContext, regexp_command=None) -> None:
+    pay_id = regexp_command.group(1)
+    data = await state.get_data()
+    await Pay.delete(model=data['list_model'], pay_id=pay_id, uid=msg.from_user.id)
+    await msg.answer('Запис видалено')
+    list_shift = int(data['list_shift'])
+    items = await Pay.pays(start=list_shift, end=list_shift+10, model=data['list_model'], uid=msg.chat.id)
+    await msg.answer(await format_list(items), parse_mode=ParseMode.HTML,
+                     reply_markup=pagination_nav(start=list_shift, count=len(items)))
+

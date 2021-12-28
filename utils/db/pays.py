@@ -21,3 +21,8 @@ class Pay(MysqlConnection):
         sql = 'SELECT * FROM %s JOIN `categories` ON %s.cat = categories.id WHERE %s.external_id = %s ' \
               'ORDER BY %s.id DESC LIMIT %s, %s' % (model, model, model, uid, model, start, end)
         return await Pay._make_request(sql, mult=True, fetch=True)
+
+    @staticmethod
+    async def delete(pay_id: int, model: str, uid: int):
+        sql = 'DELETE FROM %s WHERE %s.id = %s AND `external_id` = %s' % (model, model, pay_id, uid)
+        return await Pay._make_request(sql)
