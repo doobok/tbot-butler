@@ -30,3 +30,8 @@ class User(MysqlConnection):
         sql = 'SELECT * FROM `users` WHERE `external_id` = %s'
         params = (msg.from_user.id,)
         return await User._make_request(sql, params, fetch=True)
+
+    @staticmethod
+    async def view():
+        sql = 'SELECT * FROM `users`'
+        return await User._make_request(sql, mult=True, fetch=True)

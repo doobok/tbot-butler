@@ -27,3 +27,18 @@ class Category(MysqlConnection):
         sql = 'DELETE FROM `categories` WHERE `categories`.`id` = %s'
         params = (cat_id,)
         return await Category._make_request(sql, params)
+
+    @staticmethod
+    async def is_empty(cat_id: int) -> bool:
+        sql = 'SELECT incomes.cat, costs.cat FROM incomes, costs WHERE incomes.cat = %s OR costs.cat = %s' \
+              % (cat_id, cat_id)
+        res = await Category._make_request(sql, fetch=True)
+        return not bool(res)
+
+    @staticmethod
+    async def get_all_children(cat_id: int):
+        sql = 'WITH cte (id, parent_id) AS (SELECT id, parent_id FROM categories WHERE categories.id = %s' \
+              'UNION ALL SELECT categories.id, categories.parent_id FROM categories' \
+              'JOIN cte rec ON categories.parent_id = rec.id)' \
+              'SELECT id, parent_id FROM cte' % cat_id
+        return await Category._make_request(sql, mult=True, fetch=True)

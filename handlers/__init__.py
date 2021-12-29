@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher.filters import CommandStart
 
-from handlers.base import bot_start, add_user1, add_user2, bot_restart, add_user3, add_user4, external_menu
+from handlers.base import bot_start, add_user1, add_user2, bot_restart, add_user3, add_user4, external_menu, users_list
 from handlers.category import category_list, category_list_select, add_cat1, add_cat2, category_create, category_remove
 from handlers.cost import add_cost, pay_cat_select, sum_validate, pay_comment, confirm_comment, confirm_query, \
     add_income, show_incomes, nav_pays, show_costs, delete_pay
@@ -19,6 +19,8 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(add_user2, content_types='contact', state=UserAdd.wait_for_contact)
     dp.register_message_handler(add_user3, state=UserAdd.wait_for_name)
     dp.register_message_handler(add_user4, text=[menu_str['add-user-conf']], state=UserAdd.wait_for_confirm)
+    dp.register_message_handler(users_list, text=[menu_str['users']], state="*")
+
 
     dp.register_message_handler(category_list, text=[menu_str['cat-cost'], menu_str['cat-income']], state="*")
     dp.register_callback_query_handler(category_list_select, cat_list_item(None),

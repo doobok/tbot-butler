@@ -20,7 +20,7 @@ async def bot_restart(msg: types.Message, state: FSMContext):
 
 async def external_menu(msg: types.Message, state: FSMContext):
     await state.reset_state(with_data=False)
-    await msg.answer('Що бажаєте налаштувати?', reply_markup=ext_menu())
+    await msg.answer('Що бажаєте налаштувати?', reply_markup=ext_menu(uid=msg.from_user.id))
 
 
 async def add_user1(msg: types.Message, state: FSMContext):
@@ -63,3 +63,14 @@ async def add_user4(msg: types.Message, state: FSMContext):
     await User.register(uid, uname)
     await state.reset_state(with_data=False)
     await msg.answer('Користувач успішно доданий до списку запрошених', reply_markup=go_to_main())
+
+
+async def users_list(msg: types.Message, state: FSMContext):
+    users = await User.view()
+    txt = ['Ось користувачі, запрошені до клубу:\n']
+    if len(users) > 0:
+        for usr in users:
+            txt.append('👨‍ *%s* \[ %s \] id:%s' % (usr.get('name'), usr.get('role'), usr.get('external_id')))
+    else:
+        txt.append('💁‍♂️ Не знайдено жодного користувача')
+    await msg.answer('\n'.join(txt), reply_markup=go_to_main())
