@@ -21,7 +21,6 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(add_user4, text=[menu_str['add-user-conf']], state=UserAdd.wait_for_confirm)
     dp.register_message_handler(users_list, text=[menu_str['users']], state="*")
 
-
     dp.register_message_handler(category_list, text=[menu_str['cat-cost'], menu_str['cat-income']], state="*")
     dp.register_callback_query_handler(category_list_select, cat_list_item(None),
                                        state=(CatEdit.in_menu, CatEdit.wait_for_confirm))

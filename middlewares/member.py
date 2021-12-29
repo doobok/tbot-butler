@@ -20,14 +20,10 @@ class MemberMiddleware(BaseMiddleware):
         dispatcher = Dispatcher.get_current()
         state = dispatcher.current_state()
         data = await state.get_data()
-        print(data)
         if data.get('is_member', False) is False:
-            print('check')
             if await User.is_guest(msg):
-                print('locked')
                 raise CancelHandler()
             else:
-                print('set member')
                 await state.update_data(is_member=True)
 
         # else:

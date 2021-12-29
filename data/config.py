@@ -7,8 +7,8 @@ BASE_URL = os.getenv('BASE_URL')  # Webhook domain
 WEBHOOK_PATH = f'/tg/webhooks/bot/{BOT_TOKEN}'
 WEBHOOK_URL = f'{BASE_URL}{WEBHOOK_PATH}'
 
-WEBAPP_HOST = '0.0.0.0'  # or ip
-WEBAPP_PORT = 8082
+WEBAPP_HOST = os.getenv('LOCAL_IP')  # or ip
+WEBAPP_PORT = os.getenv('WEBAPP_PORT')
 
 admin = os.getenv('ADMIN_ID')
 

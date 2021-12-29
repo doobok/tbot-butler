@@ -149,10 +149,11 @@ async def delete_pay(msg: types.Message,  state: FSMContext, regexp_command=None
 async def format_list(items: list):
     txt = ['Список операцій:\n']
     if len(items) > 0:
-        locale.setlocale(locale.LC_ALL, 'uk_UA.UTF-8')
+        # locale.setlocale(locale.LC_ALL, 'uk_UA.UTF-8')
         for item in items:
             txt.append('👉 <b>%s</b> [ %s ] \n<i><u>%s</u> /delpay_%s❌\n%s</i> ' %
-                       (locale.currency(float(item.get('sum')), grouping=True), item.get('name'), item.get('time'),
+                       (float(item.get('sum')), item.get('name'), item.get('time'),
+                       # (locale.currency(float(item.get('sum')), grouping=True), item.get('name'), item.get('time'),
                         item.get('id'), item.get('comment')))
     else:
         txt.append('💁‍♂️ Нічого не знайдено')
