@@ -14,7 +14,7 @@ async def bot_start(msg: types.Message, state: FSMContext):
 
 
 async def bot_restart(msg: types.Message, state: FSMContext):
-    await state.reset_state()
+    await state.reset_state(with_data=False)
     await msg.answer('Оберіть пункт меню', reply_markup=main_menu())
 
 

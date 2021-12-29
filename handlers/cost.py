@@ -97,7 +97,7 @@ async def save_pay_to_db(state: FSMContext, comment: str, uid: int):
     elif data['pay_cat_model'] == 'income':
         await Pay.create_income(summ=data['pay_sum'], comment=comment, cat=data['pay_cat_id'], uid=uid)
         txt = '_Дані успішно внесені, переглянути усі надходження можна тут 👉 /incomes_'
-    await state.reset_state()
+    await state.reset_state(with_data=False)
     return txt
 
 
