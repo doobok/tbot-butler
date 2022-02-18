@@ -20,3 +20,7 @@ class PayAdd(StatesGroup):
 
 class PaysList(StatesGroup):
     in_list = State()
+
+
+class CurrencySection(StatesGroup):
+    in_currency = State()

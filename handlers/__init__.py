@@ -5,8 +5,10 @@ from handlers.base import bot_start, add_user1, add_user2, bot_restart, add_user
 from handlers.category import category_list, category_list_select, add_cat1, add_cat2, category_create, category_remove
 from handlers.cost import add_cost, pay_cat_select, sum_validate, pay_comment, confirm_comment, confirm_query, \
     add_income, show_incomes, nav_pays, show_costs, delete_pay
-from states.mane import UserAdd, CatEdit, PayAdd, PaysList
+from handlers.currency import opn_currency, select_currency, use_currency, menu_currency
+from states.mane import UserAdd, CatEdit, PayAdd, PaysList, CurrencySection
 from utils.callbacks.category_callback import cat_list_item, cat_item_global, confirm, remove, navigate
+from utils.callbacks.currency_callback import currency_select
 from utils.misc.menu_utils import menu_str
 
 
@@ -43,4 +45,8 @@ def setup(dp: Dispatcher):
     dp.register_callback_query_handler(nav_pays, navigate(None), state=PaysList.in_list)
     dp.register_message_handler(delete_pay, regexp_commands=['delpay_([0-9]*)'], state=PaysList.in_list)
 
+    dp.register_message_handler(opn_currency, text=[menu_str['currency']], state="*")
+    dp.register_message_handler(menu_currency, text=[menu_str['get-currency']], state=CurrencySection.in_currency)
+    dp.register_callback_query_handler(select_currency, currency_select(None), state=CurrencySection.in_currency)
+    dp.register_message_handler(use_currency, state=CurrencySection.in_currency)
 
