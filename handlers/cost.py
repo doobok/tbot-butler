@@ -58,47 +58,41 @@ async def sum_validate(msg: types.Message, state: FSMContext):
                                      msg.text,
                                      re.VERBOSE)))
     if len(val) < 1:
-        await msg.answer('Будь\-ласка, введіть число')
+        await msg.answer('Будь-ласка, введіть число')
     else:
         summa = val[0]
+        await PayAdd.next()
         await state.update_data(pay_sum=summa)
-        await msg.answer(f'Бажаєте внести {summa} грн?\n\n'
-                         f'<i>вітправте мені нову суму, якщо потрібно скоригувати</i>',
-                         parse_mode=ParseMode.HTML, reply_markup=nex_step())
+        await save_pay_to_db(msg=msg, state=state, comment='', uid=msg.chat.id)
 
 
-async def pay_comment(query: types.CallbackQuery, state: FSMContext):
-    await query.answer()
-    await PayAdd.next()
-    txt = '_Якщо потрібно \- залиште коментар, або просто натисніть Продовжити\.\n' \
-          'В обох випадках дані будуть відразу збережені_'
-    await query.message.edit_text(txt)
-    await query.message.edit_reply_markup(reply_markup=nex_step())
-
-
-async def confirm_comment(msg: types.Message, state: FSMContext):
-    comment = msg.text
-    txt = await save_pay_to_db(state=state, comment=comment, uid=msg.chat.id)
-    await msg.answer(txt)
-
-
-async def confirm_query(query: types.CallbackQuery, state: FSMContext):
-    await query.answer()
-    txt = await save_pay_to_db(state=state, comment='', uid=query.from_user.id)
-    await query.message.edit_text(txt)
-
-
-async def save_pay_to_db(state: FSMContext, comment: str, uid: int):
+async def pay_comment(msg: types.Message, state: FSMContext):
     data = await state.get_data()
-    txt = ''
-    if data['pay_cat_model'] == 'cost':
-        await Pay.create_cost(summ=data['pay_sum'], comment=comment, cat=data['pay_cat_id'], uid=uid)
-        txt = '_Дані успішно внесені, переглянути усі витрати можна тут 👉 /costs_'
-    elif data['pay_cat_model'] == 'income':
-        await Pay.create_income(summ=data['pay_sum'], comment=comment, cat=data['pay_cat_id'], uid=uid)
-        txt = '_Дані успішно внесені, переглянути усі надходження можна тут 👉 /incomes_'
+    await Pay.pay_comment_add(data['pay_cat_model']+'s', comment=msg.text, uid=msg.chat.id)
     await state.reset_state(with_data=False)
-    return txt
+    await msg.answer('Коментар успішно доданий')
+
+
+async def save_pay_to_db(msg: types.Message, state: FSMContext, comment: str, uid: int):
+    data = await state.get_data()
+    summa = data['pay_sum']
+    cat_id = data['pay_cat_id']
+    item = await Category.view(cat_id=cat_id)
+    category = item['name']
+    txt = [
+        f'Ви успішно внесли <b>{summa}</b> грн. в категорію <b>{category}</b>',
+        'якщо бажаєте, можете відправити мені коментар до цієї суми'
+    ]
+    kbd = ''
+    if data['pay_cat_model'] == 'cost':
+        kbd = costs_keyboard()
+        await Pay.create_cost(summ=summa, comment=comment, cat=cat_id, uid=uid)
+        txt.append('<i>👇 внести ще, переглянути усі витрати 👉 /costs</i>')
+    elif data['pay_cat_model'] == 'income':
+        kbd = incomes_keyboard()
+        await Pay.create_income(summ=summa, comment=comment, cat=cat_id, uid=uid)
+        txt.append('<i>👇 внести ще, переглянути усі надходження 👉 /incomes</i>')
+    await msg.answer('\n'.join(txt), reply_markup=kbd, parse_mode=ParseMode.HTML)
 
 
 async def show_incomes(msg: types.Message, state: FSMContext):
@@ -138,12 +132,15 @@ async def nav_pays(query: types.CallbackQuery, state: FSMContext, callback_data:
 async def delete_pay(msg: types.Message,  state: FSMContext, regexp_command=None) -> None:
     pay_id = regexp_command.group(1)
     data = await state.get_data()
-    await Pay.delete(model=data['list_model'], pay_id=pay_id, uid=msg.from_user.id)
-    await msg.answer('Запис видалено')
-    list_shift = int(data['list_shift'])
-    items = await Pay.pays(start=list_shift, end=list_shift+10, model=data['list_model'], uid=msg.chat.id)
-    await msg.answer(await format_list(items), parse_mode=ParseMode.HTML,
-                     reply_markup=pagination_nav(start=list_shift, count=len(items)))
+    if await Pay.is_fresh(pid=pay_id, model=data['list_model']):
+        await Pay.delete(model=data['list_model'], pay_id=pay_id, uid=msg.from_user.id)
+        await msg.answer('Запис видалено')
+        list_shift = int(data['list_shift'])
+        items = await Pay.pays(start=list_shift, end=list_shift + 10, model=data['list_model'], uid=msg.chat.id)
+        await msg.answer(await format_list(items), parse_mode=ParseMode.HTML,
+                         reply_markup=pagination_nav(start=list_shift, count=len(items)))
+    else:
+        await msg.answer('💁 Неможливо видалити\! Термін коригування запису, який складає 24 години, завершився')
 
 
 async def format_list(items: list):
