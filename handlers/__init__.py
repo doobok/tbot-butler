@@ -33,13 +33,13 @@ def setup(dp: Dispatcher):
 
     dp.register_message_handler(add_cost, text=[menu_str['add-cost']], state="*")
     dp.register_message_handler(add_income, text=[menu_str['add-income']], state="*")
-    dp.register_callback_query_handler(pay_cat_select, cat_list_item(None), state=PayAdd.wait_for_cat)
-    dp.register_message_handler(sum_validate, state=PayAdd.wait_for_cat)
-    dp.register_message_handler(pay_comment, state=PayAdd.wait_for_comment)
     dp.register_message_handler(show_costs, commands=['costs'], state="*")
     dp.register_message_handler(show_costs, text=[menu_str['costs']], state="*")
     dp.register_message_handler(show_incomes, commands=['incomes'], state="*")
     dp.register_message_handler(show_incomes, text=[menu_str['incomes']], state="*")
+    dp.register_callback_query_handler(pay_cat_select, cat_list_item(None), state=PayAdd.wait_for_cat)
+    dp.register_message_handler(sum_validate, state=PayAdd.wait_for_cat)
+    dp.register_message_handler(pay_comment, state=PayAdd.wait_for_comment)
     dp.register_callback_query_handler(nav_pays, navigate(None), state=PaysList.in_list)
     dp.register_message_handler(delete_pay, regexp_commands=['delpay_([0-9]*)'], state=PaysList.in_list)
 
