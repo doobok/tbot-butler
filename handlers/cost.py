@@ -58,7 +58,7 @@ async def sum_validate(msg: types.Message, state: FSMContext):
                                      msg.text,
                                      re.VERBOSE)))
     if len(val) < 1:
-        await msg.answer('Будь-ласка, введіть число')
+        await msg.answer('Будь\-ласка, введіть число')
     else:
         summa = val[0]
         await PayAdd.next()
