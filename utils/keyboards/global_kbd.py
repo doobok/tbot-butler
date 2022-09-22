@@ -11,7 +11,7 @@ def main_menu():
         types.KeyboardButton(text=menu_str['add-income']),
         types.KeyboardButton(text=menu_str['add-cost']),
     ).row(
-        # types.KeyboardButton(text=menu_str['projects']),
+        types.KeyboardButton(text=menu_str['projects']),
         types.KeyboardButton(text=menu_str['currency']),
         types.KeyboardButton(text=menu_str['ext-menu']),
     )

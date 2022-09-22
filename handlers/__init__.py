@@ -6,6 +6,7 @@ from handlers.category import category_list, category_list_select, add_cat1, add
 from handlers.cost import add_cost, pay_cat_select, sum_validate, \
     add_income, show_incomes, nav_pays, show_costs, delete_pay, pay_comment
 from handlers.currency import opn_currency, select_currency, use_currency, menu_currency
+from handlers.project import projects_list
 from states.mane import UserAdd, CatEdit, PayAdd, PaysList, CurrencySection
 from utils.callbacks.category_callback import cat_list_item, cat_item_global, confirm, remove, navigate
 from utils.callbacks.currency_callback import currency_select
@@ -47,4 +48,6 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(menu_currency, text=[menu_str['get-currency']], state=CurrencySection.in_currency)
     dp.register_callback_query_handler(select_currency, currency_select(None), state=CurrencySection.in_currency)
     dp.register_message_handler(use_currency, state=CurrencySection.in_currency)
+
+    dp.register_message_handler(projects_list, text=[menu_str['projects']], state="*")
 
